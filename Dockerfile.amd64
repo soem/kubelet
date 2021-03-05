@@ -3,11 +3,13 @@ LABEL maintainer="Dalton Hubble <dghubble@gmail.com>"
 
 ARG KUBELET=v1.19.4
 ARG ARCH=amd64
-ARG SHA=6ce43d84df8b983c9294b05c7d2cbd2ec1286c2055e5719de983b4b85e95dcb1adb4baa5269a2ee3e392e3ace093b22c409fade113057a2af01d3ab50c660806
+ARG DOWNLOAD_SITE=https://storage.googleapis.com/kubernetes-release/release
+
+ENV RELEASE_FILE=${DOWNLOAD_SITE}/${KUBELET}/kubernetes-node-linux-${ARCH}.tar.gz
 
 RUN apk add curl && \
-  curl -L https://dl.k8s.io/${KUBELET}/kubernetes-node-linux-${ARCH}.tar.gz -o node.tar.gz && \
-  echo "${SHA}  node.tar.gz" | sha512sum -c && \
+  curl -L ${RELEASE_FILE} -o node.tar.gz && \
+  echo "$(curl -s ${RELEASE_FILE}.sha512)  node.tar.gz" | sha512sum -c && \
   tar xzf node.tar.gz kubernetes/node/bin/kubectl kubernetes/node/bin/kubelet
 
 
